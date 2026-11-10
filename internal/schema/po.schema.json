@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PurchaseOrderExtraction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["doc_type", "buyer", "po_number", "po_date", "delivery_date", "currency", "total", "line_items"],
+  "properties": {
+    "doc_type": { "type": "string", "enum": ["purchase_order", "rfq"] },
+    "buyer": { "type": "string", "maxLength": 200 },
+    "po_number": { "type": "string", "maxLength": 64, "pattern": "^([A-Za-z0-9][A-Za-z0-9._/-]{0,63})?$" },
+    "po_date": { "type": "string", "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$" },
+    "delivery_date": { "type": "string", "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$" },
+    "currency": { "type": "string", "enum": ["", "USD", "EUR", "GBP", "INR"] },
+    "total": { "type": ["number", "null"], "minimum": 0, "maximum": 1000000000 },
+    "line_items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["part_number", "description", "quantity", "unit", "unit_price"],
+        "properties": {
+          "part_number": { "type": "string", "maxLength": 64 },
+          "description": { "type": "string", "maxLength": 300 },
+          "quantity": { "type": "number", "exclusiveMinimum": 0, "maximum": 10000000 },
+          "unit": { "type": "string", "enum": ["", "EA", "KG", "M", "BOX", "SET", "L"] },
+          "unit_price": { "type": ["number", "null"], "minimum": 0, "maximum": 100000000 }
+        }
+      }
+    }
+  }
+}
