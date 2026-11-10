@@ -1,0 +1,16 @@
+PURCHASE ORDER
+Company,Harbor Valve Co
+Purchase Order No.,PO-66949
+PO Date,03/06/2026
+Delivery Date,09/07/2026
+Currency,USD
+
+#,Item Code,Description,Quantity,UoM,Rate
+1,HXB-M8-40-ZN,Hex bolt M8x40mm ZP,200,each,0.20
+2,HXBM650ZN,Hex bolt M6x50mm ZP,50,each,0.20
+3,HXB-M12-40-ZN,Hex bolt M12x40mm ZP,10,EA,0.24
+4,HXB-M8-30-ZN,Hex bolt M8 x 20mm zinc plaetd,2500,EA,0.16
+5,hxb-m6-30-zn,HEX BOLT M6 X 30MM ZINC PLATED,500,pcs,0.16
+6,HXB-M8-50-ZN,Hex bolt M8x50mm ZP,200,nos,0.22
+
+Total,,,,,576.40

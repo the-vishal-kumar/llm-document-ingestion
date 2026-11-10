@@ -1,0 +1,15 @@
+PURCHASE ORDER
+
+Bill To: Juniper Motors S.A.
+PO No.: PO-60625
+Date: 09 Jun 2026
+Need By: 16 Jul 2026
+Currency: EUR
+
+Sr No   Unit Price   Qty        Item Code      Description
+1       EUR 0.15     500 each   HXB-M6-30-ZN   Hex bolt M6 x 30mm zinc plated
+2       EUR 3.13     20 L       oil-cut-sol    SOLUBLE CUTTING OIL
+3       EUR 0.17     2500 pcs   HXB-M8-30-NZ   HEX BOLT M8 X 30MM ZINC PLATED
+4       EUR 4.23     5 box      CTY-300-BK     Cable ties 300mm black box of 100
+
+Total: EUR 583.75

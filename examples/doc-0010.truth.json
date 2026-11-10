@@ -1,0 +1,26 @@
+{
+  "document": {
+    "doc_type": "rfq",
+    "buyer": "Pinecrest Assemblies Inc",
+    "po_number": "RFQ-25387",
+    "po_date": "2026-05-14",
+    "delivery_date": "2026-07-04",
+    "currency": "USD",
+    "total": null,
+    "line_items": [
+      {
+        "part_number": "BRG-6202-2SR",
+        "description": "Deep groove ball bearing 6202 2RS",
+        "quantity": 500,
+        "unit": "EA",
+        "unit_price": null
+      }
+    ]
+  },
+  "skus": [
+    "BRG-6202-2RS"
+  ],
+  "noise": [
+    "part_typo"
+  ]
+}

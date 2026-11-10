@@ -1,0 +1,29 @@
+From: Jonas Weber <jonas@kestrel-pumps.example>
+To: sales@supplier.example
+Subject: Purchase Order PO/2026/4453
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+Please supply the items below against our purchase order.
+
+Customer: Kestrel Pumps GmbH
+PO No.: PO/2026/4453
+Order Date: 30 Aug 2026
+Need By: 03 Oct 2026
+Currency: EUR
+
+#   Part No         Description                       Qty    UoM    Price
+1   HOS-HY-06       HYDRAULIC HOSE 6MM TWO-WIRE       50     M      3.96
+2   hxb-m8-50-zn    HEX BOLT M8 X 50MM ZINC PLATED    10     each   0.20
+3   HXB-M10-20-ZN   Hex bolt M10 x 20mm zinc plated   10     each   0.17
+4   WLD-ER70-10     Welding wire ER70S-6 1.0mm        25     KGS    2.58
+5   BRG-6202-2RS    DGBB 6202 2RS                     1000   PC     2.30
+6   VLV-BL-025-SS   BALL VALVE 25MM STAINLESS STEEL   50     each   15.87
+
+Total: 3359.70
+
+Regards,
+Jonas Weber
+Procurement, Kestrel Pumps GmbH

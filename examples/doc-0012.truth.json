@@ -1,0 +1,51 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Tamarind Engineering Pvt Ltd",
+    "po_number": "TE-PO-0817",
+    "po_date": "2026-07-07",
+    "delivery_date": "2026-09-06",
+    "currency": "INR",
+    "total": 184758,
+    "line_items": [
+      {
+        "part_number": "HXB-M12-40-ZN",
+        "description": "Hex bolt M12 x 40mm zinc plated",
+        "quantity": 25,
+        "unit": "EA",
+        "unit_price": 19.92
+      },
+      {
+        "part_number": "HXB-M6-50-ZN",
+        "description": "HEX BOLT M6 X 50MM ZINC PLATED",
+        "quantity": 2500,
+        "unit": "EA",
+        "unit_price": 16.6
+      },
+      {
+        "part_number": "VLV-BL-020-SS",
+        "description": "Ball valve 20mm stainless steel",
+        "quantity": 100,
+        "unit": "EA",
+        "unit_price": 1245
+      },
+      {
+        "part_number": "HXB-M8-50-ZN",
+        "description": "Hex bolt M8x50mm ZP",
+        "quantity": 1000,
+        "unit": "EA",
+        "unit_price": 18.26
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M12-40-ZN",
+    "HXB-M6-50-ZN",
+    "VLV-BL-020-SS",
+    "HXB-M8-50-ZN"
+  ],
+  "noise": [
+    "abbreviated_desc",
+    "unit_in_qty"
+  ]
+}

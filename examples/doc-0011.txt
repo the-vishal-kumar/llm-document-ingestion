@@ -1,0 +1,15 @@
+REQUEST FOR QUOTATION
+
+Buyer: Kestrel Pumps GmbH
+RFQ Number: RFQ-83998
+RFQ Date: 29/07/2026
+Required By: 25/09/2026
+Currency: EUR
+
+Line   SKU             Description                         Quantity   Unit
+1      HXB-M6-30-ZN    Hex bolt M6x30mm ZP                 25         EA
+2      VLV-BL-020-SS   Ball valve 20mm stainless steel     200        pcs
+3      -               Hex bolt M8 x 50mm zinc plated      50         each
+4      HOSHY12         Hyd. hose 12mm two-wire             25         mtr
+5      HXB-M10-50-ZN   HEX BOLT M10 X 50MM ZINC PLATED     200        nos
+6      CTY-200-BK      Cbale ties 200mm black box of 100   5          BX

@@ -1,0 +1,53 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Juniper Motors S.A.",
+    "po_number": "PO-60625",
+    "po_date": "2026-06-09",
+    "delivery_date": "2026-07-16",
+    "currency": "EUR",
+    "total": 583.75,
+    "line_items": [
+      {
+        "part_number": "HXB-M6-30-ZN",
+        "description": "Hex bolt M6 x 30mm zinc plated",
+        "quantity": 500,
+        "unit": "EA",
+        "unit_price": 0.15
+      },
+      {
+        "part_number": "oil-cut-sol",
+        "description": "SOLUBLE CUTTING OIL",
+        "quantity": 20,
+        "unit": "L",
+        "unit_price": 3.13
+      },
+      {
+        "part_number": "HXB-M8-30-NZ",
+        "description": "HEX BOLT M8 X 30MM ZINC PLATED",
+        "quantity": 2500,
+        "unit": "EA",
+        "unit_price": 0.17
+      },
+      {
+        "part_number": "CTY-300-BK",
+        "description": "Cable ties 300mm black box of 100",
+        "quantity": 5,
+        "unit": "BOX",
+        "unit_price": 4.23
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M6-30-ZN",
+    "OIL-CUT-SOL",
+    "HXB-M8-30-ZN",
+    "CTY-300-BK"
+  ],
+  "noise": [
+    "part_format",
+    "part_typo",
+    "column_order",
+    "unit_in_qty"
+  ]
+}

@@ -1,0 +1,12 @@
+PURCHASE ORDER
+Customer,Orion Fabricators Inc
+Order Ref,PO/2026/2336
+PO Date,24/05/2026
+Delivery Date,07/07/2026
+Currency,USD
+
+#,Part Number,Item Description,Qty,UoM,Rate
+1,XHB-M8-40-ZN,Hex bolt M8 x 40mm zinc palted,25,Pcs,0.20
+2,HXB-M10-50-ZN,Hex bolt M10 x 50mm zinc plated,10,each,0.24
+
+Order Total,,,,,7.40

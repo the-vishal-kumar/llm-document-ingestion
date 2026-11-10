@@ -1,0 +1,71 @@
+{
+  "document": {
+    "doc_type": "rfq",
+    "buyer": "Kestrel Pumps GmbH",
+    "po_number": "RFQ-83998",
+    "po_date": "2026-07-29",
+    "delivery_date": "2026-09-25",
+    "currency": "EUR",
+    "total": null,
+    "line_items": [
+      {
+        "part_number": "HXB-M6-30-ZN",
+        "description": "Hex bolt M6x30mm ZP",
+        "quantity": 25,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "VLV-BL-020-SS",
+        "description": "Ball valve 20mm stainless steel",
+        "quantity": 200,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "",
+        "description": "Hex bolt M8 x 50mm zinc plated",
+        "quantity": 50,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "HOSHY12",
+        "description": "Hyd. hose 12mm two-wire",
+        "quantity": 25,
+        "unit": "M",
+        "unit_price": null
+      },
+      {
+        "part_number": "HXB-M10-50-ZN",
+        "description": "HEX BOLT M10 X 50MM ZINC PLATED",
+        "quantity": 200,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "CTY-200-BK",
+        "description": "Cbale ties 200mm black box of 100",
+        "quantity": 5,
+        "unit": "BOX",
+        "unit_price": null
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M6-30-ZN",
+    "VLV-BL-020-SS",
+    "HXB-M8-50-ZN",
+    "HOS-HY-12",
+    "HXB-M10-50-ZN",
+    "CTY-200-BK"
+  ],
+  "noise": [
+    "abbreviated_desc",
+    "missing_part",
+    "part_format",
+    "abbreviated_desc",
+    "desc_typo",
+    "slash_date"
+  ]
+}

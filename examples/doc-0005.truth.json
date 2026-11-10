@@ -1,0 +1,54 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Harbor Valve Co",
+    "po_number": "HV-PO-5220",
+    "po_date": "",
+    "delivery_date": "2026-08-09",
+    "currency": "USD",
+    "total": 56.9,
+    "line_items": [
+      {
+        "part_number": "BRG-6206-2RS",
+        "description": "DGBB 6206 2RS",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 3.9
+      },
+      {
+        "part_number": "cty-200-bk",
+        "description": "CABLE TIES 200MM BLACK BOX OF 100",
+        "quantity": 2,
+        "unit": "BOX",
+        "unit_price": 3.2
+      },
+      {
+        "part_number": "HXB-M10-30-ZN",
+        "description": "HEX BOLT M10 X 30MM ZINC PLATED",
+        "quantity": 25,
+        "unit": "EA",
+        "unit_price": 0.2
+      },
+      {
+        "part_number": "HXB/M12/50/ZN",
+        "description": "Hex bolt M12 x 50mm zinc plaetd",
+        "quantity": 25,
+        "unit": "EA",
+        "unit_price": 0.26
+      }
+    ]
+  },
+  "skus": [
+    "BRG-6206-2RS",
+    "CTY-200-BK",
+    "HXB-M10-30-ZN",
+    "HXB-M12-50-ZN"
+  ],
+  "noise": [
+    "abbreviated_desc",
+    "part_format",
+    "part_format",
+    "desc_typo",
+    "column_order"
+  ]
+}

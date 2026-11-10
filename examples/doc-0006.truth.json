@@ -1,0 +1,68 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Kestrel Pumps GmbH",
+    "po_number": "PO/2026/4453",
+    "po_date": "2026-08-30",
+    "delivery_date": "2026-10-03",
+    "currency": "EUR",
+    "total": 3359.7,
+    "line_items": [
+      {
+        "part_number": "HOS-HY-06",
+        "description": "HYDRAULIC HOSE 6MM TWO-WIRE",
+        "quantity": 50,
+        "unit": "M",
+        "unit_price": 3.96
+      },
+      {
+        "part_number": "hxb-m8-50-zn",
+        "description": "HEX BOLT M8 X 50MM ZINC PLATED",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 0.2
+      },
+      {
+        "part_number": "HXB-M10-20-ZN",
+        "description": "Hex bolt M10 x 20mm zinc plated",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 0.17
+      },
+      {
+        "part_number": "WLD-ER70-10",
+        "description": "Welding wire ER70S-6 1.0mm",
+        "quantity": 25,
+        "unit": "KG",
+        "unit_price": 2.58
+      },
+      {
+        "part_number": "BRG-6202-2RS",
+        "description": "DGBB 6202 2RS",
+        "quantity": 1000,
+        "unit": "EA",
+        "unit_price": 2.3
+      },
+      {
+        "part_number": "VLV-BL-025-SS",
+        "description": "BALL VALVE 25MM STAINLESS STEEL",
+        "quantity": 50,
+        "unit": "EA",
+        "unit_price": 15.87
+      }
+    ]
+  },
+  "skus": [
+    "HOS-HY-06",
+    "HXB-M8-50-ZN",
+    "HXB-M10-20-ZN",
+    "WLD-ER70-10",
+    "BRG-6202-2RS",
+    "VLV-BL-025-SS"
+  ],
+  "noise": [
+    "part_format",
+    "abbreviated_desc",
+    "abbreviated_desc"
+  ]
+}

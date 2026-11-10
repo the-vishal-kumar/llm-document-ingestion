@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Bill To,Tamarind Engineering Pvt Ltd
+Purchase Order No.,TE-PO-0817
+PO Date,07 Jul 2026
+Delivery Date,06 Sep 2026
+
+#,SKU,Description,Qty,Rate
+1,HXB-M12-40-ZN,Hex bolt M12 x 40mm zinc plated,25 nos,INR 19.92
+2,HXB-M6-50-ZN,HEX BOLT M6 X 50MM ZINC PLATED,2500 EA,INR 16.60
+3,VLV-BL-020-SS,Ball valve 20mm stainless steel,100 PC,INR 1245.00
+4,HXB-M8-50-ZN,Hex bolt M8x50mm ZP,"1,000 Pcs",INR 18.26
+
+Grand Total,,,,"INR 184,758.00"

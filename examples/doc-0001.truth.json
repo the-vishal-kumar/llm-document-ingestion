@@ -1,0 +1,36 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Orion Fabricators Inc",
+    "po_number": "PO/2026/2336",
+    "po_date": "2026-05-24",
+    "delivery_date": "2026-07-07",
+    "currency": "USD",
+    "total": 7.4,
+    "line_items": [
+      {
+        "part_number": "XHB-M8-40-ZN",
+        "description": "Hex bolt M8 x 40mm zinc palted",
+        "quantity": 25,
+        "unit": "EA",
+        "unit_price": 0.2
+      },
+      {
+        "part_number": "HXB-M10-50-ZN",
+        "description": "Hex bolt M10 x 50mm zinc plated",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 0.24
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M8-40-ZN",
+    "HXB-M10-50-ZN"
+  ],
+  "noise": [
+    "part_typo",
+    "desc_typo",
+    "slash_date"
+  ]
+}

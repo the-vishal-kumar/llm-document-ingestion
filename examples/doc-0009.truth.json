@@ -1,0 +1,74 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Harbor Valve Co",
+    "po_number": "PO-66949",
+    "po_date": "2026-06-03",
+    "delivery_date": "2026-07-09",
+    "currency": "USD",
+    "total": 576.4,
+    "line_items": [
+      {
+        "part_number": "HXB-M8-40-ZN",
+        "description": "Hex bolt M8x40mm ZP",
+        "quantity": 200,
+        "unit": "EA",
+        "unit_price": 0.2
+      },
+      {
+        "part_number": "HXBM650ZN",
+        "description": "Hex bolt M6x50mm ZP",
+        "quantity": 50,
+        "unit": "EA",
+        "unit_price": 0.2
+      },
+      {
+        "part_number": "HXB-M12-40-ZN",
+        "description": "Hex bolt M12x40mm ZP",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 0.24
+      },
+      {
+        "part_number": "HXB-M8-30-ZN",
+        "description": "Hex bolt M8 x 20mm zinc plaetd",
+        "quantity": 2500,
+        "unit": "EA",
+        "unit_price": 0.16
+      },
+      {
+        "part_number": "hxb-m6-30-zn",
+        "description": "HEX BOLT M6 X 30MM ZINC PLATED",
+        "quantity": 500,
+        "unit": "EA",
+        "unit_price": 0.16
+      },
+      {
+        "part_number": "HXB-M8-50-ZN",
+        "description": "Hex bolt M8x50mm ZP",
+        "quantity": 200,
+        "unit": "EA",
+        "unit_price": 0.22
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M8-40-ZN",
+    "HXB-M6-50-ZN",
+    "HXB-M12-40-ZN",
+    "HXB-M8-20-ZN",
+    "HXB-M6-30-ZN",
+    "HXB-M8-50-ZN"
+  ],
+  "noise": [
+    "abbreviated_desc",
+    "part_format",
+    "abbreviated_desc",
+    "abbreviated_desc",
+    "part_digit_slip",
+    "desc_typo",
+    "part_format",
+    "abbreviated_desc",
+    "slash_date"
+  ]
+}

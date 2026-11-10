@@ -1,0 +1,25 @@
+From: Amelia Hart <amelia@bluebird-machining.example>
+To: sales@supplier.example
+Subject: Purchase Order PO-57871
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+Please supply the items below against our purchase order.
+
+Company: Bluebird Machining Ltd
+Order Ref: PO-57871
+Order Date: 09.07.2026
+Need By: 06.09.2026
+Currency: GBP
+
+Sr No   SKU            Item Description                    Quantity   UoM   Rate
+1       BRG-6204-2RS   Deep grooev ball bearing 6204 2RS   10         Pcs   GBP 2.53
+2       O1L-CUT-NEAT   Neat cutting oil                    100        L     GBP 3.24
+
+Total: GBP 349.30
+
+Regards,
+Amelia Hart
+Procurement, Bluebird Machining Ltd

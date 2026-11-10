@@ -1,0 +1,27 @@
+{
+  "document": {
+    "doc_type": "rfq",
+    "buyer": "Kestrel Pumps GmbH",
+    "po_number": "RFQ-89902",
+    "po_date": "2026-01-09",
+    "delivery_date": "2026-03-08",
+    "currency": "",
+    "total": null,
+    "line_items": [
+      {
+        "part_number": "HXB-M6-20-ZN",
+        "description": "HEX BOLT M6 X 20MM ZINC PLATED",
+        "quantity": 2500,
+        "unit": "EA",
+        "unit_price": null
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M6-20-ZN"
+  ],
+  "noise": [
+    "european_numbers",
+    "column_order"
+  ]
+}

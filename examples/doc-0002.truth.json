@@ -1,0 +1,36 @@
+{
+  "document": {
+    "doc_type": "purchase_order",
+    "buyer": "Bluebird Machining Ltd",
+    "po_number": "PO-57871",
+    "po_date": "2026-07-09",
+    "delivery_date": "2026-09-06",
+    "currency": "GBP",
+    "total": 349.3,
+    "line_items": [
+      {
+        "part_number": "BRG-6204-2RS",
+        "description": "Deep grooev ball bearing 6204 2RS",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": 2.53
+      },
+      {
+        "part_number": "O1L-CUT-NEAT",
+        "description": "Neat cutting oil",
+        "quantity": 100,
+        "unit": "L",
+        "unit_price": 3.24
+      }
+    ]
+  },
+  "skus": [
+    "BRG-6204-2RS",
+    "OIL-CUT-NEAT"
+  ],
+  "noise": [
+    "desc_typo",
+    "part_typo",
+    "abbreviated_desc"
+  ]
+}

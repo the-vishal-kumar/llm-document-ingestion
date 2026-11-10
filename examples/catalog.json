@@ -1,0 +1,236 @@
+[
+  {
+    "sku": "HXB-M6-20-ZN",
+    "description": "Hex bolt M6 x 20mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.14
+  },
+  {
+    "sku": "HXB-M6-30-ZN",
+    "description": "Hex bolt M6 x 30mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.16
+  },
+  {
+    "sku": "HXB-M6-40-ZN",
+    "description": "Hex bolt M6 x 40mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.18
+  },
+  {
+    "sku": "HXB-M6-50-ZN",
+    "description": "Hex bolt M6 x 50mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.2
+  },
+  {
+    "sku": "HXB-M8-20-ZN",
+    "description": "Hex bolt M8 x 20mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.16
+  },
+  {
+    "sku": "HXB-M8-30-ZN",
+    "description": "Hex bolt M8 x 30mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.18
+  },
+  {
+    "sku": "HXB-M8-40-ZN",
+    "description": "Hex bolt M8 x 40mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.2
+  },
+  {
+    "sku": "HXB-M8-50-ZN",
+    "description": "Hex bolt M8 x 50mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.22
+  },
+  {
+    "sku": "HXB-M10-20-ZN",
+    "description": "Hex bolt M10 x 20mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.18
+  },
+  {
+    "sku": "HXB-M10-30-ZN",
+    "description": "Hex bolt M10 x 30mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.2
+  },
+  {
+    "sku": "HXB-M10-40-ZN",
+    "description": "Hex bolt M10 x 40mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.22
+  },
+  {
+    "sku": "HXB-M10-50-ZN",
+    "description": "Hex bolt M10 x 50mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.24
+  },
+  {
+    "sku": "HXB-M12-20-ZN",
+    "description": "Hex bolt M12 x 20mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.2
+  },
+  {
+    "sku": "HXB-M12-30-ZN",
+    "description": "Hex bolt M12 x 30mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.22
+  },
+  {
+    "sku": "HXB-M12-40-ZN",
+    "description": "Hex bolt M12 x 40mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.24
+  },
+  {
+    "sku": "HXB-M12-50-ZN",
+    "description": "Hex bolt M12 x 50mm zinc plated",
+    "unit": "EA",
+    "list_price_usd": 0.26
+  },
+  {
+    "sku": "BRG-6201-2RS",
+    "description": "Deep groove ball bearing 6201 2RS",
+    "unit": "EA",
+    "list_price_usd": 2.15
+  },
+  {
+    "sku": "BRG-6202-2RS",
+    "description": "Deep groove ball bearing 6202 2RS",
+    "unit": "EA",
+    "list_price_usd": 2.5
+  },
+  {
+    "sku": "BRG-6203-2RS",
+    "description": "Deep groove ball bearing 6203 2RS",
+    "unit": "EA",
+    "list_price_usd": 2.85
+  },
+  {
+    "sku": "BRG-6204-2RS",
+    "description": "Deep groove ball bearing 6204 2RS",
+    "unit": "EA",
+    "list_price_usd": 3.2
+  },
+  {
+    "sku": "BRG-6205-2RS",
+    "description": "Deep groove ball bearing 6205 2RS",
+    "unit": "EA",
+    "list_price_usd": 3.55
+  },
+  {
+    "sku": "BRG-6206-2RS",
+    "description": "Deep groove ball bearing 6206 2RS",
+    "unit": "EA",
+    "list_price_usd": 3.9
+  },
+  {
+    "sku": "VLV-BL-015-SS",
+    "description": "Ball valve 15mm stainless steel",
+    "unit": "EA",
+    "list_price_usd": 12.75
+  },
+  {
+    "sku": "VLV-BL-020-SS",
+    "description": "Ball valve 20mm stainless steel",
+    "unit": "EA",
+    "list_price_usd": 15
+  },
+  {
+    "sku": "VLV-BL-025-SS",
+    "description": "Ball valve 25mm stainless steel",
+    "unit": "EA",
+    "list_price_usd": 17.25
+  },
+  {
+    "sku": "VLV-BL-040-SS",
+    "description": "Ball valve 40mm stainless steel",
+    "unit": "EA",
+    "list_price_usd": 24
+  },
+  {
+    "sku": "VLV-BL-050-SS",
+    "description": "Ball valve 50mm stainless steel",
+    "unit": "EA",
+    "list_price_usd": 28.5
+  },
+  {
+    "sku": "HOS-HY-06",
+    "description": "Hydraulic hose 6mm two-wire",
+    "unit": "M",
+    "list_price_usd": 4.3
+  },
+  {
+    "sku": "HOS-HY-08",
+    "description": "Hydraulic hose 8mm two-wire",
+    "unit": "M",
+    "list_price_usd": 4.9
+  },
+  {
+    "sku": "HOS-HY-10",
+    "description": "Hydraulic hose 10mm two-wire",
+    "unit": "M",
+    "list_price_usd": 5.5
+  },
+  {
+    "sku": "HOS-HY-12",
+    "description": "Hydraulic hose 12mm two-wire",
+    "unit": "M",
+    "list_price_usd": 6.1
+  },
+  {
+    "sku": "ORK-NBR-S",
+    "description": "O-ring kit NBR small sizes",
+    "unit": "SET",
+    "list_price_usd": 14.5
+  },
+  {
+    "sku": "ORK-NBR-L",
+    "description": "O-ring kit NBR large sizes",
+    "unit": "SET",
+    "list_price_usd": 22
+  },
+  {
+    "sku": "OIL-CUT-SOL",
+    "description": "Soluble cutting oil",
+    "unit": "L",
+    "list_price_usd": 3.4
+  },
+  {
+    "sku": "OIL-CUT-NEAT",
+    "description": "Neat cutting oil",
+    "unit": "L",
+    "list_price_usd": 4.1
+  },
+  {
+    "sku": "WLD-ER70-08",
+    "description": "Welding wire ER70S-6 0.8mm",
+    "unit": "KG",
+    "list_price_usd": 2.9
+  },
+  {
+    "sku": "WLD-ER70-10",
+    "description": "Welding wire ER70S-6 1.0mm",
+    "unit": "KG",
+    "list_price_usd": 2.8
+  },
+  {
+    "sku": "CTY-200-BK",
+    "description": "Cable ties 200mm black box of 100",
+    "unit": "BOX",
+    "list_price_usd": 3.2
+  },
+  {
+    "sku": "CTY-300-BK",
+    "description": "Cable ties 300mm black box of 100",
+    "unit": "BOX",
+    "list_price_usd": 4.6
+  }
+]

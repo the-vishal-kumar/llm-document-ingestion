@@ -1,0 +1,70 @@
+{
+  "document": {
+    "doc_type": "rfq",
+    "buyer": "Redwood Tooling Pvt Ltd",
+    "po_number": "RFQ-98386",
+    "po_date": "2026-10-11",
+    "delivery_date": "2026-12-06",
+    "currency": "",
+    "total": null,
+    "line_items": [
+      {
+        "part_number": "HXB-M8-30-ZN",
+        "description": "HEX BOLT M8 X 30MM ZINC PLATED",
+        "quantity": 2500,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "HXB-M6-40-ZN",
+        "description": "Hex bolt M6 x 40mm zinc plated",
+        "quantity": 50,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "ORK-NBR-L",
+        "description": "O-RING KIT NBR LARGE SIZES",
+        "quantity": 1,
+        "unit": "SET",
+        "unit_price": null
+      },
+      {
+        "part_number": "HXB/M8/50/ZN",
+        "description": "Hex bolt M8 x 50mm zinc plated",
+        "quantity": 10,
+        "unit": "EA",
+        "unit_price": null
+      },
+      {
+        "part_number": "HOS-HY-06",
+        "description": "Hydraulic hose 6mm two-wire",
+        "quantity": 50,
+        "unit": "M",
+        "unit_price": null
+      },
+      {
+        "part_number": "vlv-bl-040-ss",
+        "description": "Ball valve 40mm stainless steel",
+        "quantity": 100,
+        "unit": "EA",
+        "unit_price": null
+      }
+    ]
+  },
+  "skus": [
+    "HXB-M8-30-ZN",
+    "HXB-M6-40-ZN",
+    "ORK-NBR-L",
+    "HXB-M8-50-ZN",
+    "HOS-HY-06",
+    "VLV-BL-040-SS"
+  ],
+  "noise": [
+    "part_format",
+    "part_format",
+    "column_order",
+    "unit_in_qty",
+    "excel_serial_date"
+  ]
+}
