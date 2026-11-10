@@ -23,6 +23,9 @@ func TestMatch(t *testing.T) {
 		{"ocr typo confirmed by description", "CTY-2O0-BK", "Cable ties 200mm black box of 100", "BOX", "CTY-200-BK", catalog.MethodFuzzy, 0.9, 0.9},
 		{"typo next to a SKU whose size contradicts the description", "HXB-M8-20-ZM", "Hex bolt M8 x 30mm zinc plated", "EA", "HXB-M8-20-ZN", catalog.MethodFuzzy, 0, 0.5},
 		{"typo without description stays below threshold", "CTY-2O0-BK", "", "", "CTY-200-BK", catalog.MethodFuzzy, 0.5, 0.8},
+		// No close runner-up, so the only thing keeping it from auto-accepting
+		// is the uncorroborated-fuzzy ceiling itself.
+		{"lone typo without description stays below threshold", "OIL-CUT-NEAI", "", "", "OIL-CUT-NEAT", catalog.MethodFuzzy, 0.5, 0.84},
 		{"digit slip onto another valid SKU is caught", "HXB-M8-20-ZN", "Hex bolt M8 x 30mm zinc plated", "EA", "HXB-M8-20-ZN", catalog.MethodExact, 0, 0.5},
 		{"description only", "", "Neat cutting oil", "L", "OIL-CUT-NEAT", catalog.MethodDescription, 0.5, 0.85},
 		{"abbreviated description", "", "DGBB 6205 2RS", "EA", "BRG-6205-2RS", catalog.MethodDescription, 0.3, 0.85},

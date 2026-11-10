@@ -76,7 +76,10 @@ func (s *Server) ingest(w http.ResponseWriter, r *http.Request) {
 	}
 	res := s.Pipeline.Run(ctx, in)
 	if s.Store != nil {
-		if _, err := s.Store.Save(res); err != nil {
+		if _, err := s.Store.Save(res); errors.Is(err, review.ErrAlreadyProcessed) {
+			// A retried upload of the same bytes: report it, keep the earlier result.
+			res.Reasons = append(res.Reasons, "already accepted or reviewed earlier; not stored again")
+		} else if err != nil {
 			s.Logger.Error("store", "id", res.ID, "err", err)
 			httpError(w, http.StatusInternalServerError, "could not store result")
 			return

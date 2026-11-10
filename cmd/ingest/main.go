@@ -150,7 +150,9 @@ func cmdRun(ctx context.Context, args []string, out io.Writer) error {
 	for _, path := range fs.Args() {
 		res := p.RunFile(ctx, path)
 		if !*dry && res.ID != "" {
-			if _, err := store.Save(res); err != nil {
+			if _, err := store.Save(res); errors.Is(err, review.ErrAlreadyProcessed) {
+				res.Reasons = append(res.Reasons, "already accepted or reviewed earlier; not stored again")
+			} else if err != nil {
 				return err
 			}
 		}

@@ -4,6 +4,8 @@ package pipeline
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -57,7 +59,10 @@ type Result struct {
 func (p *Pipeline) RunFile(ctx context.Context, path string) *Result {
 	in, err := adapters.Load(ctx, path)
 	if err != nil {
-		return &Result{Source: path, Decision: Review, Reasons: []string{"could not read input: " + err.Error()}}
+		// Give it an id so it can be queued for a human like any other item.
+		sum := sha256.Sum256([]byte("load-failure:" + path))
+		return &Result{ID: hex.EncodeToString(sum[:8]), Source: path, Decision: Review,
+			Reasons: []string{"could not read input: " + err.Error()}}
 	}
 	in.Path = path
 	return p.Run(ctx, in)
@@ -86,14 +91,15 @@ func (p *Pipeline) Run(ctx context.Context, in *adapters.Input) *Result {
 	}
 	if p.Fallback != nil && (err != nil || r.Decision == Review) {
 		r2, err2 := attempt(p.Fallback)
-		r2.Usage = append(r.Usage, r2.Usage...)
+		// Every call is billed, whichever result is kept.
+		usage := append(slices.Clone(r.Usage), r2.Usage[len(res.Usage):]...)
 		switch {
 		case err2 != nil:
 			r.Reasons = append(r.Reasons, fmt.Sprintf("%s: %v", p.Fallback.Name(), err2))
-			r.Usage = r2.Usage
 		case err != nil || r2.Confidence > r.Confidence:
 			r = r2
 		}
+		r.Usage = usage
 	}
 	if errors.Is(err, extract.ErrNeedsVision) && p.Fallback == nil {
 		r.Reasons = append(r.Reasons, "set ANTHROPIC_API_KEY and use -extractor llm or cascade to read images")

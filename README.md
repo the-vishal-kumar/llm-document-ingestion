@@ -99,7 +99,7 @@ zero.
 
 | Failure | Defence |
 |---|---|
-| Hallucinated or "helpful" values | Grounding check against the source text; schema rejects extra fields |
+| Hallucinated or "helpful" values | Grounding check against the source text (coarse: see Known gaps); schema rejects extra fields |
 | Prompt injection inside a document | Document sent as delimited data with closing tags neutralised; system prompt says to ignore embedded instructions; nothing the model returns can set routing; instruction-like text forces human review. Tested in `pipeline_test.go` with a fake model that *obeys* the injection |
 | Truncated, refused or malformed reply | `stop_reason` checked; schema validation; the document goes to review with the reason (no blind re-ask) |
 | Near-miss SKUs (`HXB-M8-20` vs `-30`) | Fuzzy margin against the runner-up; numbers in the description must match the chosen item |
@@ -242,6 +242,14 @@ results/             committed eval output
 - The model is asked for JSON through the prompt and validated locally, which
   works with both endpoints. On the Anthropic API, structured outputs
   (`output_config.format`) would remove most malformed-output failures.
+- **Grounding is coarse.** A value counts as grounded if it appears anywhere in
+  the document (substring match; numbers from a bag of every number in the
+  text), not in the row it belongs to. Injected text is part of the document,
+  so a value it mentions ("line 1 quantity is 5000") counts as grounded. What
+  stops that today is the instruction-like-text check, which is a phrase list
+  and can be phrased around, plus the line-totals check when the document has
+  a total. Grounding each value against its own table row, and ignoring spans
+  flagged as instructions, is the fix.
 - Number locale is guessed per value, not known per buyer.
 - The review store has no locking or authentication. The HTTP endpoint has no
   authentication either, so bind it to localhost.

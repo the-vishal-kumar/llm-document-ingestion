@@ -139,11 +139,12 @@ func (l *LLM) Extract(ctx context.Context, in *adapters.Input) (*Extraction, err
 		raw, usage, err = l.callAnthropic(ctx, in)
 	}
 	if err != nil {
-		return nil, err
+		// Keep any billed usage, so cost reports include failed calls.
+		return &Extraction{Extractor: l.Name(), Conf: map[string]float64{}, Usage: usage}, err
 	}
 	doc, err := ParseModelOutput(raw)
 	if err != nil {
-		return nil, err
+		return &Extraction{Extractor: l.Name(), Conf: map[string]float64{}, Usage: usage}, err
 	}
 	ex := &Extraction{Doc: *doc, Extractor: l.Name(), Conf: map[string]float64{}, Usage: usage}
 	prior := 0.9
@@ -180,11 +181,12 @@ func assignLLMConfidence(ex *Extraction, prior float64) {
 	ex.Conf["delivery_date"] = prior
 	ex.Conf["total"] = prior
 	for i, ln := range d.LineItems {
-		ex.Conf[LineKey(i, "part_number")] = prior
-		ex.Conf[LineKey(i, "description")] = prior
+		// A line needs something to identify the item by.
+		set(LineKey(i, "part_number"), ln.PartNumber != "" || ln.Description != "")
+		set(LineKey(i, "description"), ln.Description != "" || ln.PartNumber != "")
 		set(LineKey(i, "quantity"), ln.Quantity > 0)
 		set(LineKey(i, "unit"), ln.Unit != "")
-		ex.Conf[LineKey(i, "unit_price")] = prior
+		ex.Conf[LineKey(i, "unit_price")] = prior // null is allowed (RFQs)
 	}
 }
 

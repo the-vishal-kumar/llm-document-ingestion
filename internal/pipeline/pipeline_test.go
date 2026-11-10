@@ -90,7 +90,9 @@ func TestPipeline(t *testing.T) {
 		{"obedient model is caught by grounding and checks", newPipeline(obedient{}, nil), text(clean + injection), pipeline.Review, "grounding"},
 		{"invalid extraction never auto-accepts", newPipeline(broken{}, nil), text(clean), pipeline.Review, "schema validation failed"},
 		{"image without a vision extractor", newPipeline(extract.Rules{}, nil), &adapters.Input{Format: adapters.FormatImage, SHA256: strings.Repeat("cd", 32)}, pipeline.Review, "vision"},
-		{"image falls back to the LLM", newPipeline(extract.Rules{}, obedient{}), &adapters.Input{Format: adapters.FormatImage, SHA256: strings.Repeat("cd", 32), Text: clean}, pipeline.AutoAccept, ""},
+		// A real image has no text layer, so nothing can be grounded: the
+		// fallback reads it, but a human reviews it.
+		{"image falls back to the LLM, then review", newPipeline(extract.Rules{}, obedient{}), &adapters.Input{Format: adapters.FormatImage, SHA256: strings.Repeat("cd", 32)}, pipeline.Review, ""},
 		{"fallback error keeps the primary result", newPipeline(extract.Rules{}, failing{errors.New("timeout")}), text(strings.Replace(clean, "Customer: Harbor Valve Co\n", "", 1)), pipeline.Review, "failing: timeout"},
 		{"wrong total goes to review", newPipeline(extract.Rules{}, nil), text(strings.Replace(clean, "97.00", "970.00", 1)), pipeline.Review, "line_totals"},
 	}

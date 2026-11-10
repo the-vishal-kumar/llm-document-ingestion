@@ -195,7 +195,9 @@ func (c *Catalog) matchPart(pn string) (Match, []candidate) {
 			cands = append(cands, candidate{i, d})
 		}
 	}
-	m := Match{SKU: c.Items[best].SKU, Method: MethodFuzzy, Confidence: map[int]float64{1: 0.85, 2: 0.7}[bestD]}
+	// A fuzzy guess alone stays below the default 0.85 auto-accept threshold:
+	// it needs the description to agree before a line is accepted unseen.
+	m := Match{SKU: c.Items[best].SKU, Method: MethodFuzzy, Confidence: map[int]float64{1: 0.8, 2: 0.65}[bestD]}
 	switch second - bestD {
 	case 0:
 		m.Confidence = 0.3

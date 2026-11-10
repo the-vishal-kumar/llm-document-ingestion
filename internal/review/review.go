@@ -67,11 +67,26 @@ func (s *Store) path(dir, id string) (string, error) {
 	return filepath.Join(s.Root, dir, id+".json"), nil
 }
 
-// Save files a pipeline result as accepted or queued, by its decision.
-// Results without an ID (unreadable inputs) cannot be queued.
+// ErrAlreadyProcessed means the same input was accepted or labelled before.
+var ErrAlreadyProcessed = errors.New("this input was already accepted or reviewed; not overwriting it")
+
+// Save files a pipeline result as accepted or queued, by its decision. It
+// never overwrites an accepted or human-labelled result: resubmitting the
+// same bytes (a retried upload, a resent email) must not undo a correction.
 func (s *Store) Save(r *pipeline.Result) (string, error) {
 	if r.ID == "" {
-		return "", errors.New("result has no id (input could not be read); nothing to store")
+		return "", errors.New("result has no id; nothing to store")
+	}
+	for _, dir := range []string{"accepted", "labeled"} {
+		p, err := s.path(dir, r.ID)
+		if err != nil {
+			return "", err
+		}
+		if _, err := os.Stat(p); err == nil {
+			return p, ErrAlreadyProcessed
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return "", err
+		}
 	}
 	dir := "queue"
 	if r.Decision == pipeline.AutoAccept {
