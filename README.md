@@ -7,7 +7,7 @@ uncertain documents to a person. Their corrections are saved as labeled data.
 
 This is a small, clean-room reference implementation in Go with no
 third-party modules. It mirrors the patterns of AI order-ingestion work that
-Vishal Kumar led in industry. That work's production results (sales quotation
+Vishal Kumar architected in industry. That work's production results (sales quotation
 turnaround cut from 45 days to 5, and about 90% straight-through acceptance on
 AI part matching) belong to that system, **not to this repository**. No
 employer code, data or names are used here. Every company, part and document
