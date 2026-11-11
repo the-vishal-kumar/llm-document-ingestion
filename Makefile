@@ -12,7 +12,8 @@ build:
 	$(GO) build -trimpath -o bin/ingest ./cmd/ingest
 
 test:
-	$(GO) test -race ./...
+	$(GO) test -race -coverprofile=coverage.out ./...
+	@$(GO) tool cover -func=coverage.out | tail -1
 
 fmt-check:
 	@out="$$(gofmt -l .)"; if [ -n "$$out" ]; then echo "gofmt needed:"; echo "$$out"; exit 1; fi
@@ -59,4 +60,4 @@ docker-ci:
 ci: lint test vuln eval-check
 
 clean:
-	rm -rf bin var
+	rm -rf bin var coverage.out

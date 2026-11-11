@@ -1,0 +1,17 @@
+# Weekly update PRs for the pinned GitHub Actions and Docker base images.
+# The Go module has no third-party requirements, but the gomod entry keeps
+# the toolchain line in go.mod current.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
