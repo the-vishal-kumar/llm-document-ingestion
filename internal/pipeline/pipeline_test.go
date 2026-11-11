@@ -62,6 +62,23 @@ func (obedient) Extract(_ context.Context, in *adapters.Input) (*extract.Extract
 	return ex, nil
 }
 
+// dropsTotal is a fake LLM that reads everything correctly except the
+// document total, which it leaves out. That would skip the line-total check.
+type dropsTotal struct{}
+
+func (dropsTotal) Name() string { return "fake-drops-total" }
+func (dropsTotal) Extract(_ context.Context, in *adapters.Input) (*extract.Extraction, error) {
+	ex, err := extract.Rules{}.Extract(context.Background(), in)
+	if err != nil {
+		return nil, err
+	}
+	ex.Doc.Total = nil
+	for k := range ex.Conf {
+		ex.Conf[k] = 0.95
+	}
+	return ex, nil
+}
+
 // broken returns output that fails schema validation.
 type broken struct{}
 
@@ -94,6 +111,7 @@ func TestPipeline(t *testing.T) {
 		// fallback reads it, but a human reviews it.
 		{"image falls back to the LLM, then review", newPipeline(extract.Rules{}, obedient{}), &adapters.Input{Format: adapters.FormatImage, SHA256: strings.Repeat("cd", 32)}, pipeline.Review, ""},
 		{"fallback error keeps the primary result", newPipeline(extract.Rules{}, failing{errors.New("timeout")}), text(strings.Replace(clean, "Customer: Harbor Valve Co\n", "", 1)), pipeline.Review, "failing: timeout"},
+		{"omitted total goes to review", newPipeline(dropsTotal{}, nil), text(strings.Replace(clean, "97.00", "970.00", 1)), pipeline.Review, "stated_total"},
 		{"wrong total goes to review", newPipeline(extract.Rules{}, nil), text(strings.Replace(clean, "97.00", "970.00", 1)), pipeline.Review, "line_totals"},
 	}
 	for _, tt := range tests {
