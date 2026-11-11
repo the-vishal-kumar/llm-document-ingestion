@@ -192,9 +192,13 @@ func TestLLMLocalRunner(t *testing.T) {
 					t.Errorf("bad local request: %s %+v", r.URL.Path, req)
 				}
 			})
-			_, err := newTestLLM(srv.URL, ProviderLocal, io.Discard).Extract(context.Background(), &adapters.Input{Format: "txt", Text: "x"})
+			ex, err := newTestLLM(srv.URL, ProviderLocal, io.Discard).Extract(context.Background(), &adapters.Input{Format: "txt", Text: "x"})
 			if (err == nil) != tt.ok {
 				t.Fatalf("err = %v", err)
+			}
+			// The local runner reports no tokens, but every call is timed.
+			if ex == nil || ex.Usage == nil {
+				t.Fatal("no usage recorded for a local call")
 			}
 		})
 	}

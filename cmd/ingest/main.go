@@ -370,6 +370,8 @@ func cmdEval(ctx context.Context, args []string, out io.Writer) error {
 	dir := fs.String("dir", "", "write the dataset here (default: a temp dir, removed afterwards)")
 	workers := fs.Int("workers", 1, "documents processed concurrently")
 	listErrors := fs.Bool("list-errors", false, "print every document that is not fully correct to stderr")
+	priceIn := fs.Float64("usd-per-mtok-in", 2, "input list price in USD per million tokens, for the cost estimate (default: claude-sonnet-5-5)")
+	priceOut := fs.Float64("usd-per-mtok-out", 10, "output list price in USD per million tokens, for the cost estimate")
 	if err := parse(fs, args); err != nil {
 		return err
 	}
@@ -389,6 +391,7 @@ func cmdEval(ctx context.Context, args []string, out io.Writer) error {
 		return err
 	}
 	rep.Label = map[string]string{"rules": "rule-based baseline", "llm": "LLM extractor", "cascade": "cascade (rules, then LLM)"}[*pf.extractor]
+	rep.PriceIn, rep.PriceOut = *priceIn, *priceOut
 	rep.Command = fmt.Sprintf("ingest eval -extractor %s -n %d -seed %d -threshold %.2f", *pf.extractor, *n, *seed, *pf.threshold)
 	if *listErrors {
 		for _, d := range rep.Docs {

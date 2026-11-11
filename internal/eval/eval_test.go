@@ -61,3 +61,29 @@ func TestRunSmall(t *testing.T) {
 		t.Errorf("po_number support = %d, want %d", rep.Fields["po_number"].Support, len(noPDF))
 	}
 }
+
+func emptyFields() map[string]*Counts {
+	m := map[string]*Counts{}
+	for _, f := range FieldOrder {
+		m[f] = &Counts{}
+	}
+	return m
+}
+
+func TestLLMRows(t *testing.T) {
+	rep := &Report{Fields: emptyFields(), PriceIn: 2, PriceOut: 10, Docs: []DocOutcome{
+		{InTokens: 1000, OutTokens: 500, LLMCalls: 1, LatencyMS: []int64{1200}},
+		{InTokens: 3000, OutTokens: 1500, LLMCalls: 2, LatencyMS: []int64{800, 4000}},
+		{}, // the rules were sure: no call
+	}}
+	md := rep.Markdown()
+	// (4000*2 + 2000*10) / 1e6 / 3 docs = $0.0093 per document.
+	for _, want := range []string{"| Documents that called the LLM | 66.7% (2/3) |", "| LLM calls | 3 |", "$0.0093", "1.2 s / 4.0 s / 4.0 s"} {
+		if !strings.Contains(md, want) {
+			t.Errorf("report lacks %q", want)
+		}
+	}
+	if strings.Contains((&Report{Fields: emptyFields(), Docs: []DocOutcome{{}}}).Markdown(), "LLM") {
+		t.Error("a run without LLM calls must not mention the LLM")
+	}
+}

@@ -53,6 +53,8 @@ type DocOutcome struct {
 	Mismatches []string // fields that differ from ground truth
 	InTokens   int
 	OutTokens  int
+	LLMCalls   int
+	LatencyMS  []int64 // one per LLM call
 }
 
 // Report aggregates an eval run.
@@ -62,6 +64,9 @@ type Report struct {
 	Threshold float64
 	Fields    map[string]*Counts
 	Docs      []DocOutcome
+	// List prices in USD per million tokens, used to estimate cost when
+	// the run made LLM calls. Zero leaves cost out of the report.
+	PriceIn, PriceOut float64
 }
 
 // FieldOrder is the row order of the field table.
@@ -104,6 +109,8 @@ func Run(ctx context.Context, p *pipeline.Pipeline, samples []synth.Sample, dir 
 		for _, u := range r.Usage {
 			o.InTokens += u.InputTokens
 			o.OutTokens += u.OutputTokens
+			o.LLMCalls++
+			o.LatencyMS = append(o.LatencyMS, u.LatencyMS)
 		}
 		rep.Docs = append(rep.Docs, o)
 	}
@@ -255,6 +262,44 @@ func reasonKind(s string) string {
 	return strings.TrimSpace(s)
 }
 
+// llmRows adds cost and latency rows when the run called a model. A
+// rule-based run makes no calls, so its report stays byte-for-byte stable.
+func (rep *Report) llmRows(w func(string, ...any)) {
+	in, out, calls, withCall := 0, 0, 0, 0
+	var lat []int64
+	for _, d := range rep.Docs {
+		in, out, calls = in+d.InTokens, out+d.OutTokens, calls+d.LLMCalls
+		lat = append(lat, d.LatencyMS...)
+		if d.LLMCalls > 0 {
+			withCall++
+		}
+	}
+	if calls == 0 {
+		return
+	}
+	n := float64(len(rep.Docs))
+	w("| Documents that called the LLM | %s (%d/%d) |\n", pct(withCall, len(rep.Docs)), withCall, len(rep.Docs))
+	w("| LLM calls | %d |\n", calls)
+	if in+out > 0 {
+		w("| LLM tokens per document (mean in / out) | %.0f / %.0f |\n", float64(in)/n, float64(out)/n)
+		if rep.PriceIn > 0 || rep.PriceOut > 0 {
+			usd := (float64(in)*rep.PriceIn + float64(out)*rep.PriceOut) / 1e6
+			w("| Estimated LLM cost per document (at $%g / $%g per M tokens in / out) | $%.4f |\n", rep.PriceIn, rep.PriceOut, usd/n)
+		}
+	}
+	slices.Sort(lat)
+	w("| LLM latency per call (p50 / p95 / max, retries included) | %s / %s / %s |\n",
+		ms(quantile(lat, 0.5)), ms(quantile(lat, 0.95)), ms(lat[len(lat)-1]))
+}
+
+// quantile returns the nearest-rank quantile of sorted, which is non-empty.
+func quantile(sorted []int64, q float64) int64 {
+	i := int(math.Ceil(q*float64(len(sorted)))) - 1
+	return sorted[min(max(i, 0), len(sorted)-1)]
+}
+
+func ms(v int64) string { return fmt.Sprintf("%.1f s", float64(v)/1000) }
+
 // Markdown renders the report.
 func (rep *Report) Markdown() string {
 	var b strings.Builder
@@ -283,13 +328,7 @@ func (rep *Report) Markdown() string {
 	w("| Error rate among auto-accepted | %s (%d/%d) |\n", pct(all.wrongAccepted, all.accepted), all.wrongAccepted, all.accepted)
 	w("| Documents fully correct, any route | %s (%d/%d) |\n", pct(all.correct, all.n), all.correct, all.n)
 	w("| Sent to human review | %d |\n", all.n-all.accepted)
-	in, out := 0, 0
-	for _, d := range rep.Docs {
-		in, out = in+d.InTokens, out+d.OutTokens
-	}
-	if in+out > 0 {
-		w("| LLM tokens per document (mean in / out) | %.0f / %.0f |\n", float64(in)/float64(len(rep.Docs)), float64(out)/float64(len(rep.Docs)))
-	}
+	rep.llmRows(w)
 	w("\nA document is \"fully correct\" when every header field, every line field and every catalog match equals ground truth.\n\n")
 
 	w("## Field-level extraction\n\n| Field | Support | Precision | Recall | F1 |\n|---|---:|---:|---:|---:|\n")

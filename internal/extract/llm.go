@@ -130,15 +130,22 @@ Do not guess. An empty or null value is better than an invented one.`
 
 // Extract implements Extractor.
 func (l *LLM) Extract(ctx context.Context, in *adapters.Input) (*Extraction, error) {
+	start := time.Now()
 	var raw []byte
-	var usage *Usage
 	var err error
+	usage := &Usage{}
 	switch l.cfg.Provider {
 	case ProviderLocal:
 		raw, err = l.callLocal(ctx, in)
 	default:
-		raw, usage, err = l.callAnthropic(ctx, in)
+		var u *Usage
+		if raw, u, err = l.callAnthropic(ctx, in); u != nil {
+			usage = u
+		}
 	}
+	// Wall time for the whole call, retries and backoff included: that is
+	// what a document waits.
+	usage.LatencyMS = time.Since(start).Milliseconds()
 	if err != nil {
 		// Keep any billed usage, so cost reports include failed calls.
 		return &Extraction{Extractor: l.Name(), Conf: map[string]float64{}, Usage: usage}, err
@@ -157,10 +164,12 @@ func (l *LLM) Extract(ctx context.Context, in *adapters.Input) (*Extraction, err
 	return ex, nil
 }
 
-// Usage records tokens billed for one extraction.
+// Usage records one LLM extraction: tokens billed (zero when the provider
+// does not report them, as with claude-local-api) and wall-clock latency.
 type Usage struct {
-	InputTokens  int `json:"input_tokens"`
-	OutputTokens int `json:"output_tokens"`
+	InputTokens  int   `json:"input_tokens"`
+	OutputTokens int   `json:"output_tokens"`
+	LatencyMS    int64 `json:"latency_ms"`
 }
 
 // assignLLMConfidence gives every populated field the prior. Empty required
