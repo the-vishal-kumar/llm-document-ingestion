@@ -12,6 +12,7 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -214,10 +215,16 @@ func ParseModelOutput(raw []byte) (*po.Document, error) {
 	return &doc, nil
 }
 
+// closingTag matches anything a model might read as the end of the document
+// block: any letter case, and whitespace after the slash or before the name.
+var closingTag = regexp.MustCompile(`(?i)<\s*/\s*document`)
+
 // documentBlock wraps text as data. A closing tag inside the document is
 // neutralised so the text cannot end the block early.
 func documentBlock(in *adapters.Input) string {
-	text := strings.ReplaceAll(in.Text, "</document", "<\\/document")
+	text := closingTag.ReplaceAllStringFunc(in.Text, func(m string) string {
+		return strings.Replace(m, "/", "\\/", 1)
+	})
 	return fmt.Sprintf("<document format=%q>\n%s\n</document>\nExtract this document.", in.Format, text)
 }
 
