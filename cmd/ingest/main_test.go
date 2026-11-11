@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -75,5 +76,34 @@ func TestCLIFlow(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(store, "labeled", id+".json")); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestExitCodes(t *testing.T) {
+	ctx := context.Background()
+	tests := []struct {
+		args []string
+		want int
+	}{
+		{[]string{"help"}, 0},
+		{[]string{"run", "-h"}, 0},
+		{[]string{"review", "list", "-h"}, 0},
+		{nil, 2},
+		{[]string{"bogus"}, 2},
+		{[]string{"run"}, 2},
+		{[]string{"run", "-nope", "x.txt"}, 2},
+		{[]string{"run", "-extractor", "gpt", "x.txt"}, 2},
+		{[]string{"review", "bogus"}, 2},
+		{[]string{"review", "show"}, 2},
+		{[]string{"gen"}, 2},
+		{[]string{"review", "show", "-store", t.TempDir(), "0123456789abcdef"}, 1},
+	}
+	for _, tt := range tests {
+		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
+			var stderr bytes.Buffer
+			if got := exitCode(run(ctx, tt.args, io.Discard), &stderr); got != tt.want {
+				t.Fatalf("exit %d, want %d; stderr %q", got, tt.want, stderr.String())
+			}
+		})
 	}
 }

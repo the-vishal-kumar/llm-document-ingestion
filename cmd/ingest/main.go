@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -56,16 +57,56 @@ func main() {
 	defer stop()
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	slog.SetDefault(logger)
-	if err := run(ctx, os.Args[1:], os.Stdout); err != nil {
-		fmt.Fprintln(os.Stderr, "ingest:", err)
-		os.Exit(1)
+	os.Exit(exitCode(run(ctx, os.Args[1:], os.Stdout), os.Stderr))
+}
+
+// Exit codes: 0 success (including -h), 1 the command failed, 2 the command
+// line was wrong.
+func exitCode(err error, stderr io.Writer) int {
+	var ue usageError
+	switch {
+	case err == nil, errors.Is(err, flag.ErrHelp):
+		return 0
+	case errors.As(err, &ue):
+		fmt.Fprintln(stderr, "ingest:", err)
+		fmt.Fprintln(stderr, `run "ingest help" or "ingest <command> -h" for usage`)
+		return 2
+	default:
+		fmt.Fprintln(stderr, "ingest:", err)
+		return 1
 	}
+}
+
+// usageError marks a mistake in the command line rather than a failure.
+type usageError struct{ msg string }
+
+func (e usageError) Error() string { return e.msg }
+
+func usagef(format string, a ...any) error { return usageError{fmt.Sprintf(format, a...)} }
+
+// newFlagSet returns a flag set whose -h output starts with a synopsis.
+func newFlagSet(name, synopsis string) *flag.FlagSet {
+	fs := flag.NewFlagSet(name, flag.ContinueOnError)
+	fs.Usage = func() {
+		fmt.Fprintf(fs.Output(), "usage: ingest %s\n\nflags:\n", synopsis)
+		fs.PrintDefaults()
+	}
+	return fs
+}
+
+// parse wraps flag errors as usage errors; -h stays flag.ErrHelp.
+func parse(fs *flag.FlagSet, args []string) error {
+	err := fs.Parse(args)
+	if err == nil || errors.Is(err, flag.ErrHelp) {
+		return err
+	}
+	return usageError{err.Error()}
 }
 
 func run(ctx context.Context, args []string, out io.Writer) error {
 	if len(args) == 0 {
 		fmt.Fprint(os.Stderr, usage)
-		return errors.New("no command")
+		return usagef("no command")
 	}
 	switch args[0] {
 	case "run":
@@ -82,7 +123,7 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 		fmt.Fprint(out, usage)
 		return nil
 	}
-	return fmt.Errorf("unknown command %q", args[0])
+	return usagef("unknown command %q", args[0])
 }
 
 type pipelineFlags struct {
@@ -125,22 +166,22 @@ func (f pipelineFlags) build() (*pipeline.Pipeline, error) {
 		p.Primary = extract.Rules{}
 		p.Fallback, err = llm()
 	default:
-		err = fmt.Errorf("unknown extractor %q", *f.extractor)
+		err = usagef("unknown extractor %q (want rules, llm or cascade)", *f.extractor)
 	}
 	return p, err
 }
 
 func cmdRun(ctx context.Context, args []string, out io.Writer) error {
-	fs := flag.NewFlagSet("run", flag.ContinueOnError)
+	fs := newFlagSet("run", "run [flags] <file>...")
 	pf := addPipelineFlags(fs)
 	storeDir := fs.String("store", "var", "review store directory")
 	dry := fs.Bool("dry-run", false, "do not write to the store")
 	asJSON := fs.Bool("json", false, "print full results as JSON")
-	if err := fs.Parse(args); err != nil {
+	if err := parse(fs, args); err != nil {
 		return err
 	}
 	if fs.NArg() == 0 {
-		return errors.New("run: no files given")
+		return usagef("run: no files given")
 	}
 	p, err := pf.build()
 	if err != nil {
@@ -170,17 +211,29 @@ func cmdRun(ctx context.Context, args []string, out io.Writer) error {
 }
 
 func cmdReview(args []string, out io.Writer) error {
-	if len(args) == 0 {
-		return errors.New("review: want list, show, approve or correct")
+	if len(args) == 0 || !slices.Contains([]string{"list", "show", "approve", "correct"}, args[0]) {
+		return usagef("review: want list, show, approve or correct")
 	}
-	fs := flag.NewFlagSet("review "+args[0], flag.ContinueOnError)
-	storeDir := fs.String("store", "var", "review store directory")
-	reviewer := fs.String("reviewer", os.Getenv("USER"), "reviewer name recorded with the label")
-	file := fs.String("file", "", "corrected document JSON (correct)")
-	var sets multiFlag
-	fs.Var(&sets, "set", "field=value to change, e.g. po_number=PO-1 or line_items[0].quantity=5 (repeatable)")
 	sub := args[0]
-	if err := fs.Parse(args[1:]); err != nil {
+	synopsis := map[string]string{
+		"list":    "review list [-store dir]",
+		"show":    "review show [-store dir] <id>",
+		"approve": "review approve [-store dir] [-reviewer name] <id>",
+		"correct": "review correct [-store dir] [-reviewer name] [-file doc.json] [-set field=value ...] <id>",
+	}[sub]
+	fs := newFlagSet("review "+sub, synopsis)
+	storeDir := fs.String("store", "var", "review store directory")
+	// Each subcommand shows only the flags it reads.
+	reviewer, file := new(string), new(string)
+	var sets multiFlag
+	if sub == "approve" || sub == "correct" {
+		fs.StringVar(reviewer, "reviewer", os.Getenv("USER"), "reviewer name recorded with the label")
+	}
+	if sub == "correct" {
+		fs.StringVar(file, "file", "", "corrected document JSON; must pass the schema")
+		fs.Var(&sets, "set", "field=value to change, e.g. po_number=PO-1 or line_items[0].quantity=5 (repeatable)")
+	}
+	if err := parse(fs, args[1:]); err != nil {
 		return err
 	}
 	store := &review.Store{Root: *storeDir}
@@ -203,7 +256,7 @@ func cmdReview(args []string, out io.Writer) error {
 		return nil
 	}
 	if fs.NArg() != 1 {
-		return fmt.Errorf("review %s: want exactly one id", sub)
+		return usagef("review %s: want exactly one id", sub)
 	}
 	id := fs.Arg(0)
 	switch sub {
@@ -309,7 +362,7 @@ func applySet(doc *po.Document, kv string) error {
 }
 
 func cmdEval(ctx context.Context, args []string, out io.Writer) error {
-	fs := flag.NewFlagSet("eval", flag.ContinueOnError)
+	fs := newFlagSet("eval", "eval [flags]")
 	pf := addPipelineFlags(fs)
 	n := fs.Int("n", 300, "number of synthetic documents")
 	seed := fs.Uint64("seed", 42, "dataset seed")
@@ -317,7 +370,7 @@ func cmdEval(ctx context.Context, args []string, out io.Writer) error {
 	dir := fs.String("dir", "", "write the dataset here (default: a temp dir, removed afterwards)")
 	workers := fs.Int("workers", 1, "documents processed concurrently")
 	listErrors := fs.Bool("list-errors", false, "print every document that is not fully correct to stderr")
-	if err := fs.Parse(args); err != nil {
+	if err := parse(fs, args); err != nil {
 		return err
 	}
 	p, err := pf.build()
@@ -353,16 +406,16 @@ func cmdEval(ctx context.Context, args []string, out io.Writer) error {
 }
 
 func cmdGen(args []string, out io.Writer) error {
-	fs := flag.NewFlagSet("gen", flag.ContinueOnError)
+	fs := newFlagSet("gen", "gen -out <dir> [flags]")
 	n := fs.Int("n", 20, "number of documents")
 	seed := fs.Uint64("seed", 7, "dataset seed")
 	dir := fs.String("out", "", "output directory (required)")
 	truth := fs.Bool("truth", true, "also write <name>.truth.json files")
-	if err := fs.Parse(args); err != nil {
+	if err := parse(fs, args); err != nil {
 		return err
 	}
 	if *dir == "" {
-		return errors.New("gen: -out is required")
+		return usagef("gen: -out is required")
 	}
 	if err := os.MkdirAll(*dir, 0o750); err != nil {
 		return err
@@ -387,11 +440,11 @@ func cmdGen(args []string, out io.Writer) error {
 }
 
 func cmdServe(ctx context.Context, args []string) error {
-	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
+	fs := newFlagSet("serve", "serve [flags]")
 	pf := addPipelineFlags(fs)
 	addr := fs.String("addr", "127.0.0.1:8080", "listen address")
 	storeDir := fs.String("store", "var", "review store directory")
-	if err := fs.Parse(args); err != nil {
+	if err := parse(fs, args); err != nil {
 		return err
 	}
 	p, err := pf.build()
