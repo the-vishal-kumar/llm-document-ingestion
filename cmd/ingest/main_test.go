@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -105,5 +107,22 @@ func TestExitCodes(t *testing.T) {
 				t.Fatalf("exit %d, want %d; stderr %q", got, tt.want, stderr.String())
 			}
 		})
+	}
+}
+
+func TestHealthcheck(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/healthz" {
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}))
+	defer srv.Close()
+	addr := strings.TrimPrefix(srv.URL, "http://")
+	if err := run(context.Background(), []string{"healthcheck", "-addr", addr}, io.Discard); err != nil {
+		t.Fatalf("healthy server: %v", err)
+	}
+	srv.Close()
+	if err := run(context.Background(), []string{"healthcheck", "-addr", addr}, io.Discard); err == nil {
+		t.Fatal("want an error once the server is gone")
 	}
 }

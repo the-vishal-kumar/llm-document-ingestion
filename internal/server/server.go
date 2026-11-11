@@ -28,8 +28,15 @@ import (
 type Server struct {
 	Pipeline *pipeline.Pipeline
 	Store    *review.Store // optional
-	Logger   *slog.Logger
+	Logger   *slog.Logger  // optional; slog.Default() when nil
 	Timeout  time.Duration
+}
+
+func (s *Server) logger() *slog.Logger {
+	if s.Logger != nil {
+		return s.Logger
+	}
+	return slog.Default()
 }
 
 var safeName = regexp.MustCompile(`^[A-Za-z0-9._-]{1,128}$`)
@@ -80,13 +87,13 @@ func (s *Server) ingest(w http.ResponseWriter, r *http.Request) {
 			// A retried upload of the same bytes: report it, keep the earlier result.
 			res.Reasons = append(res.Reasons, "already accepted or reviewed earlier; not stored again")
 		} else if err != nil {
-			s.Logger.Error("store", "id", res.ID, "err", err)
+			s.logger().Error("store", "id", res.ID, "err", err)
 			httpError(w, http.StatusInternalServerError, "could not store result")
 			return
 		}
 	}
 	// Log metadata only; document contents never reach the logs.
-	s.Logger.Info("ingested", "id", res.ID, "format", res.Format, "decision", res.Decision, "confidence", res.Confidence)
+	s.logger().Info("ingested", "id", res.ID, "format", res.Format, "decision", res.Decision, "confidence", res.Confidence)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(res)
 }

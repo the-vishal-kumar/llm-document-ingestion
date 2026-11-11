@@ -61,3 +61,14 @@ func TestIngest(t *testing.T) {
 		})
 	}
 }
+
+// A Server built without a Logger must not panic on the first request.
+func TestNilLogger(t *testing.T) {
+	s := &Server{Pipeline: &pipeline.Pipeline{Primary: extract.Rules{}, Catalog: catalog.New(synth.Catalog()), Threshold: pipeline.DefaultThreshold}}
+	rec := httptest.NewRecorder()
+	body := "PO Number: PO-1\nBuyer: Harbor Valve Co\n\nPart No | Qty\nBRG-6204-2RS | 10\n"
+	s.Handler().ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/ingest?filename=a.txt", strings.NewReader(body)))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status %d: %s", rec.Code, rec.Body)
+	}
+}

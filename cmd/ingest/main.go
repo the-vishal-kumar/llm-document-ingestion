@@ -7,6 +7,7 @@
 //	ingest eval [flags]                   score against synthetic ground truth
 //	ingest gen [flags]                    write a synthetic dataset to disk
 //	ingest serve [flags]                  HTTP endpoint (POST /v1/ingest)
+//	ingest healthcheck [-addr host:port]  probe a running serve (for Docker)
 package main
 
 import (
@@ -48,6 +49,7 @@ commands:
   eval                          score the pipeline on a synthetic dataset
   gen -out <dir>                write a synthetic dataset and catalog
   serve                         HTTP endpoint: POST /v1/ingest?filename=...
+  healthcheck                   exit 0 if a local serve answers GET /healthz
 
 Run "ingest <command> -h" for flags.
 `
@@ -119,6 +121,8 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 		return cmdGen(args[1:], out)
 	case "serve":
 		return cmdServe(ctx, args[1:])
+	case "healthcheck":
+		return cmdHealthcheck(ctx, args[1:])
 	case "-h", "--help", "help":
 		fmt.Fprint(out, usage)
 		return nil
@@ -465,6 +469,31 @@ func cmdServe(ctx context.Context, args []string) error {
 	slog.Info("listening", "addr", *addr, "extractor", *pf.extractor)
 	if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		return err
+	}
+	return nil
+}
+
+// cmdHealthcheck probes GET /healthz. The runtime image has no curl, so the
+// Docker HEALTHCHECK calls the binary itself.
+func cmdHealthcheck(ctx context.Context, args []string) error {
+	fs := newFlagSet("healthcheck", "healthcheck [-addr host:port]")
+	addr := fs.String("addr", "127.0.0.1:8080", "address serve listens on")
+	if err := parse(fs, args); err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://"+*addr+"/healthz", nil)
+	if err != nil {
+		return err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("healthcheck: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("healthcheck: HTTP %d", resp.StatusCode)
 	}
 	return nil
 }
