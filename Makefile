@@ -3,7 +3,7 @@
 GO          ?= go
 STATICCHECK := honnef.co/go/tools/cmd/staticcheck@v0.8.2
 GOVULNCHECK := golang.org/x/vuln/cmd/govulncheck@v1.9.0
-GO_IMAGE    := golang:1.27.3-bookworm
+GO_IMAGE    := golang:1.27.4-bookworm
 IMAGE       ?= llm-document-ingestion
 
 .PHONY: build test fmt-check vet staticcheck vuln lint eval eval-check eval-llm demo docker docker-ci ci clean
