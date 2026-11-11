@@ -32,8 +32,8 @@ Currency: USD
 
 func TestRulesTables(t *testing.T) {
 	want := []po.Line{
-		{PartNumber: "HXB-M8-30-ZN", Description: "Hex bolt M8 x 30mm zinc plated", Quantity: 500, Unit: "EA", UnitPrice: po.Ptr(0.13)},
-		{PartNumber: "", Description: "Ball valve 25mm stainless steel", Quantity: 2500, Unit: "EA", UnitPrice: po.Ptr(17.25)},
+		{PartNumber: "HXB-M8-30-ZN", Description: "Hex bolt M8 x 30mm zinc plated", Quantity: 500, Unit: "EA", UnitPrice: ptr(0.13)},
+		{PartNumber: "", Description: "Ball valve 25mm stainless steel", Quantity: 2500, Unit: "EA", UnitPrice: ptr(17.25)},
 	}
 	tests := []struct {
 		name  string
@@ -156,3 +156,5 @@ func TestParseNumber(t *testing.T) {
 		}
 	}
 }
+
+func ptr(v float64) *float64 { return &v }

@@ -17,7 +17,7 @@ func sample(id, decision string) *pipeline.Result {
 		ID: id, SHA256: id + id + id + id, Source: "in/" + id + ".txt", Format: "txt", Extractor: "rules", Decision: decision, Confidence: 0.5,
 		Reasons: []string{"low confidence in buyer (0.00)"},
 		Document: &po.Document{DocType: po.TypePO, PONumber: "PO-1", Currency: "USD",
-			LineItems: []po.Line{{PartNumber: "A-1", Quantity: 5, Unit: "EA", UnitPrice: po.Ptr(1)}}},
+			LineItems: []po.Line{{PartNumber: "A-1", Quantity: 5, Unit: "EA", UnitPrice: ptr(1)}}},
 	}
 }
 
@@ -39,7 +39,7 @@ func TestStoreLifecycle(t *testing.T) {
 	}
 	doc := *sample(b, "").Document
 	doc.Buyer = "Harbor Valve Co"
-	doc.LineItems = []po.Line{{PartNumber: "A-1", Quantity: 50, Unit: "EA", UnitPrice: po.Ptr(1)}}
+	doc.LineItems = []po.Line{{PartNumber: "A-1", Quantity: 50, Unit: "EA", UnitPrice: ptr(1)}}
 	l, err := s.Correct(b, doc, "pat")
 	if err != nil {
 		t.Fatal(err)
@@ -87,3 +87,5 @@ func TestStoreRejects(t *testing.T) {
 		t.Fatalf("err = %v", err)
 	}
 }
+
+func ptr(v float64) *float64 { return &v }

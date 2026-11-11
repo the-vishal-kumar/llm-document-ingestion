@@ -53,7 +53,7 @@ func (obedient) Extract(_ context.Context, in *adapters.Input) (*extract.Extract
 	if strings.Contains(in.Text, "ignore previous instructions") {
 		ex.Doc.Buyer = "Attacker Ltd"
 		for i := range ex.Doc.LineItems {
-			ex.Doc.LineItems[i].UnitPrice = po.Ptr(0)
+			ex.Doc.LineItems[i].UnitPrice = ptr(0)
 		}
 	}
 	for k := range ex.Conf {
@@ -133,3 +133,5 @@ func TestRunFileUnreadable(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 }
+
+func ptr(v float64) *float64 { return &v }

@@ -88,9 +88,6 @@ func Alnum(s string) string {
 	return b.String()
 }
 
-// Ptr returns a pointer to v.
-func Ptr(v float64) *float64 { return &v }
-
 var euroDecimal = regexp.MustCompile(`^\d{1,3}(\.\d{3})*,\d{1,2}$`)
 
 // ParseNumber reads "1,234.50", "1234.5" and the European "1.234,50" or
