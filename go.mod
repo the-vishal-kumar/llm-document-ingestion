@@ -1,3 +1,5 @@
 module github.com/the-vishal-kumar/llm-document-ingestion
 
 go 1.27
+
+toolchain go1.27.4

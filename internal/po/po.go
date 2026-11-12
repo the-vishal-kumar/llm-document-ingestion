@@ -88,7 +88,12 @@ func Alnum(s string) string {
 	return b.String()
 }
 
-var euroDecimal = regexp.MustCompile(`^\d{1,3}(\.\d{3})*,\d{1,2}$`)
+var (
+	euroDecimal = regexp.MustCompile(`^\d{1,3}(\.\d{3})*,\d{1,2}$`)
+	// plainNumber is what is left after separators are normalised. It keeps
+	// strconv's extra syntax ("1e3", "0x1p4", "Inf") out of quantities.
+	plainNumber = regexp.MustCompile(`^-?(\d+(\.\d*)?|\.\d+)$`)
+)
 
 // ParseNumber reads "1,234.50", "1234.5" and the European "1.234,50" or
 // "0,25". A comma followed by exactly one or two final digits is a decimal
@@ -101,7 +106,7 @@ func ParseNumber(s string) (float64, bool) {
 	} else {
 		s = strings.ReplaceAll(s, ",", "")
 	}
-	if s == "" {
+	if !plainNumber.MatchString(s) {
 		return 0, false
 	}
 	f, err := strconv.ParseFloat(s, 64)

@@ -12,6 +12,7 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -129,15 +130,22 @@ Do not guess. An empty or null value is better than an invented one.`
 
 // Extract implements Extractor.
 func (l *LLM) Extract(ctx context.Context, in *adapters.Input) (*Extraction, error) {
+	start := time.Now()
 	var raw []byte
-	var usage *Usage
 	var err error
+	usage := &Usage{}
 	switch l.cfg.Provider {
 	case ProviderLocal:
 		raw, err = l.callLocal(ctx, in)
 	default:
-		raw, usage, err = l.callAnthropic(ctx, in)
+		var u *Usage
+		if raw, u, err = l.callAnthropic(ctx, in); u != nil {
+			usage = u
+		}
 	}
+	// Wall time for the whole call, retries and backoff included: that is
+	// what a document waits.
+	usage.LatencyMS = time.Since(start).Milliseconds()
 	if err != nil {
 		// Keep any billed usage, so cost reports include failed calls.
 		return &Extraction{Extractor: l.Name(), Conf: map[string]float64{}, Usage: usage}, err
@@ -156,10 +164,12 @@ func (l *LLM) Extract(ctx context.Context, in *adapters.Input) (*Extraction, err
 	return ex, nil
 }
 
-// Usage records tokens billed for one extraction.
+// Usage records one LLM extraction: tokens billed (zero when the provider
+// does not report them, as with claude-local-api) and wall-clock latency.
 type Usage struct {
-	InputTokens  int `json:"input_tokens"`
-	OutputTokens int `json:"output_tokens"`
+	InputTokens  int   `json:"input_tokens"`
+	OutputTokens int   `json:"output_tokens"`
+	LatencyMS    int64 `json:"latency_ms"`
 }
 
 // assignLLMConfidence gives every populated field the prior. Empty required
@@ -214,10 +224,16 @@ func ParseModelOutput(raw []byte) (*po.Document, error) {
 	return &doc, nil
 }
 
+// closingTag matches anything a model might read as the end of the document
+// block: any letter case, and whitespace after the slash or before the name.
+var closingTag = regexp.MustCompile(`(?i)<\s*/\s*document`)
+
 // documentBlock wraps text as data. A closing tag inside the document is
 // neutralised so the text cannot end the block early.
 func documentBlock(in *adapters.Input) string {
-	text := strings.ReplaceAll(in.Text, "</document", "<\\/document")
+	text := closingTag.ReplaceAllStringFunc(in.Text, func(m string) string {
+		return strings.Replace(m, "/", "\\/", 1)
+	})
 	return fmt.Sprintf("<document format=%q>\n%s\n</document>\nExtract this document.", in.Format, text)
 }
 

@@ -28,8 +28,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils
       - name: gofmt, vet, staticcheck
         run: make lint
-      - name: Tests (race detector)
-        run: make test
+      - name: Tests (race detector, coverage)
+        run: |
+          make test
+          go tool cover -func=coverage.out | tail -1 | awk '{print "Total coverage: " $NF}' >> "$GITHUB_STEP_SUMMARY"
       - name: govulncheck
         run: make vuln
       - name: Baseline eval matches the committed results
@@ -46,3 +48,15 @@ jobs:
         run: docker build -t llm-document-ingestion:ci .
       - name: Smoke test (eval inside the image, PDF path included)
         run: docker run --rm llm-document-ingestion:ci eval -n 40 -seed 1 > /dev/null
+      - name: Smoke test (serve becomes healthy and ingests a file)
+        run: |
+          docker run -d --name ingest -p 127.0.0.1:8080:8080 llm-document-ingestion:ci
+          for i in $(seq 1 20); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' ingest)" = healthy ] && break
+            sleep 1
+          done
+          docker inspect -f '{{.State.Health.Status}}' ingest | grep -qx healthy
+          curl -sf --data-binary @examples/doc-0003.txt 'http://127.0.0.1:8080/v1/ingest?filename=doc-0003.txt' | grep -q '"decision":"auto_accept"'
+      - name: Server logs on failure
+        if: failure()
+        run: docker logs ingest || true

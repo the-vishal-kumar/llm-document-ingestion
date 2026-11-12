@@ -3,8 +3,9 @@
 GO          ?= go
 STATICCHECK := honnef.co/go/tools/cmd/staticcheck@v0.8.2
 GOVULNCHECK := golang.org/x/vuln/cmd/govulncheck@v1.9.0
-GO_IMAGE    := golang:1.27.3-bookworm
+GO_IMAGE    := golang:1.27.4-bookworm
 IMAGE       ?= llm-document-ingestion
+COVERPROFILE ?= coverage.out
 
 .PHONY: build test fmt-check vet staticcheck vuln lint eval eval-check eval-llm demo docker docker-ci ci clean
 
@@ -12,7 +13,8 @@ build:
 	$(GO) build -trimpath -o bin/ingest ./cmd/ingest
 
 test:
-	$(GO) test -race ./...
+	$(GO) test -race -coverprofile=$(COVERPROFILE) ./...
+	@$(GO) tool cover -func=$(COVERPROFILE) | tail -1
 
 fmt-check:
 	@out="$$(gofmt -l .)"; if [ -n "$$out" ]; then echo "gofmt needed:"; echo "$$out"; exit 1; fi
@@ -54,9 +56,9 @@ docker:
 
 docker-ci:
 	docker run --rm -v "$$PWD":/src -w /src -e GOFLAGS=-buildvcs=false $(GO_IMAGE) sh -c \
-	  'apt-get update -qq && apt-get install -y -qq --no-install-recommends poppler-utils >/dev/null && git config --global --add safe.directory /src && make ci'
+	  'apt-get update -qq && apt-get install -y -qq --no-install-recommends poppler-utils >/dev/null && git config --global --add safe.directory /src && make ci COVERPROFILE=/tmp/coverage.out'
 
 ci: lint test vuln eval-check
 
 clean:
-	rm -rf bin var
+	rm -rf bin var coverage.out

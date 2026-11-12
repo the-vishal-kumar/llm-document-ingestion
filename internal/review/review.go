@@ -99,7 +99,7 @@ func (s *Store) Save(r *pipeline.Result) (string, error) {
 	return p, writeJSON(p, r)
 }
 
-// List returns queued items, oldest id first.
+// List returns queued items, sorted by source path.
 func (s *Store) List() ([]*pipeline.Result, error) {
 	entries, err := os.ReadDir(filepath.Join(s.Root, "queue"))
 	if errors.Is(err, os.ErrNotExist) {

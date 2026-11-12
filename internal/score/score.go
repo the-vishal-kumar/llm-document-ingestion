@@ -37,8 +37,11 @@ type Assessment struct {
 }
 
 var (
-	numberTok   = regexp.MustCompile(`\d(?:[\d.,]*\d)?`)
-	injectionRe = regexp.MustCompile(`(?i)(ignore|disregard|override)\s+(all\s+|any\s+|the\s+)?(previous|prior|above|earlier|system)\s+(instructions|rules|prompts?)|you are (an|a) (ai|assistant|language model)|note to (the )?(ai|assistant|model)|system prompt|auto-?approve`)
+	numberTok = regexp.MustCompile(`\d(?:[\d.,]*\d)?`)
+	// statedTotalRe finds a line that starts with a total label and carries a
+	// number: "Total: 97.00", "Grand Total | | 97.00", "Total comes to 97".
+	statedTotalRe = regexp.MustCompile(`(?im)^[\s|*#>-]*(grand\s+|order\s+)?total(\s+(amount|value|due))?\b[^\n\d]{0,24}\d`)
+	injectionRe   = regexp.MustCompile(`(?i)(ignore|disregard|override)\s+(all\s+|any\s+|the\s+)?(previous|prior|above|earlier|system)\s+(instructions|rules|prompts?)|you are (an|a) (ai|assistant|language model)|note to (the )?(ai|assistant|model)|system prompt|auto-?approve`)
 )
 
 // Assess scores ex. source is the document text; pass "" for images, which
@@ -59,6 +62,9 @@ func Assess(ex *extract.Extraction, source string) Assessment {
 			a.Checks = append(a.Checks, Check{Name: "instruction_like_text", Passed: true})
 		}
 		a.currency(d, source)
+		if isPO {
+			a.statedTotal(d, source)
+		}
 	}
 	if isPO {
 		a.totals(d)
@@ -145,6 +151,17 @@ func (a *Assessment) ground(d po.Document, source string) {
 		c.Detail = "not found in source: " + strings.Join(missing, ", ")
 	}
 	a.Checks = append(a.Checks, c)
+}
+
+// statedTotal catches the omission grounding cannot see: the document states
+// a total but the extraction has none. Without it, an extractor (or an
+// injected instruction) could drop the total and skip the line-total check.
+func (a *Assessment) statedTotal(d po.Document, source string) {
+	if d.Total != nil || !statedTotalRe.MatchString(source) {
+		return
+	}
+	a.Fields["total"] *= 0.3
+	a.Checks = append(a.Checks, Check{Name: "stated_total", Detail: "document states a total but none was extracted", Penalty: 1})
 }
 
 func (a *Assessment) totals(d po.Document) {

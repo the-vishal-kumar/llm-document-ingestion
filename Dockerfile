@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build: static binary, no cgo.
-FROM golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0 AS build
+FROM golang:1.27.4-bookworm@sha256:4fa7c968ba93f1635670522dbb01a2c78150443e1385746924566079f36570ea AS build
 WORKDIR /src
 COPY go.mod ./
 COPY cmd ./cmd
@@ -19,5 +19,8 @@ COPY --from=build /out/ingest /usr/local/bin/ingest
 USER 10001
 WORKDIR /app
 EXPOSE 8080
+# The image has no curl; the binary probes its own /healthz. Only meaningful
+# for the default serve command.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD ["ingest", "healthcheck", "-addr", "127.0.0.1:8080"]
 ENTRYPOINT ["ingest"]
 CMD ["serve", "-addr", "0.0.0.0:8080", "-store", "/app/var"]
