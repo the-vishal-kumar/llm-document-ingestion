@@ -411,7 +411,7 @@ func normLabel(s string) string {
 
 func isBlank(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "", "-", "--", "—", "n/a", "na", "tbd":
+	case "", "-", "--", "\u2014", "n/a", "na", "tbd":
 		return true
 	}
 	return false

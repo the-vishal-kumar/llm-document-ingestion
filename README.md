@@ -1,5 +1,7 @@
 # llm-document-ingestion
 
+[![CI](https://github.com/the-vishal-kumar/llm-document-ingestion/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/the-vishal-kumar/llm-document-ingestion/actions/workflows/ci.yml)
+
 Turn purchase orders and RFQs from manufacturing buyers (email, plain text,
 chat exports, CSV, Excel, PDF, images) into schema-validated JSON. Match every
 line to a part catalog, score how sure the system is, and send only the
@@ -184,7 +186,18 @@ make eval            # regenerate results/*.md
 make demo            # ingest examples/ into ./var and list the review queue
 ```
 
-Reviewing:
+The sections below call `./bin/ingest`, which `make build` (or `make demo`)
+creates; a fresh clone has no `bin/`. With Docker only, run the image in its
+place and bind-mount a `var/` directory to keep the review queue between runs:
+
+```bash
+mkdir -p var
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/examples:/data:ro" -v "$PWD/var:/app/var" \
+  llm-document-ingestion run /data/doc-0001.csv /data/doc-0003.txt
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/var:/app/var" llm-document-ingestion review list
+```
+
+Reviewing (after `make demo`, or the Docker commands above, has filled the queue):
 
 ```bash
 ./bin/ingest review list
@@ -194,7 +207,7 @@ Reviewing:
 ./bin/ingest review correct <id> -reviewer pat -file fixed.json      # must pass the schema
 ```
 
-With an LLM:
+With an LLM (after `make build`):
 
 ```bash
 export ANTHROPIC_API_KEY=...                  # never logged
@@ -206,7 +219,7 @@ export INGEST_LLM_EFFORT=low                  # default
 export INGEST_LLM_PROVIDER=local INGEST_LLM_BASE_URL=http://localhost:8787
 ```
 
-HTTP:
+HTTP (after `make build`; or `docker run --rm -p 8080:8080 llm-document-ingestion`):
 
 ```bash
 ./bin/ingest serve -addr 127.0.0.1:8080
